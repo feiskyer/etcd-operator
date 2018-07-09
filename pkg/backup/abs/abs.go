@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/storage"
+	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/pborman/uuid"
 )
 
@@ -53,13 +54,15 @@ func New(container, accountName, accountKey, accountSASToken, prefix string) (*A
 		}
 
 		// Reference: https://github.com/Azure/azure-sdk-for-go/blob/eae258195456be76b2ec9ad2ee2ab63cdda365d9/storage/client_test.go#L313
-		endpoint := fmt.Sprintf("http://%s.blob.core.windows.net/%s", accountName, container)
+		//endpoint := fmt.Sprintf("http://%s.blob.core.windows.net/%s", accountName, container)
+		endpoint := fmt.Sprintf("http://%s.blob.core.chinacloudapi.cn/%s", accountName, container)
 		basicClient, err = storage.NewAccountSASClientFromEndpointToken(endpoint, accountSASToken)
 		if err != nil {
 			return nil, fmt.Errorf("create ABS client (from SAS token) failed: %v", err)
 		}
 	} else {
-		basicClient, err = storage.NewBasicClient(accountName, accountKey)
+		//basicClient, err = storage.NewBasicClient(accountName, accountKey)
+		basicClient, err = storage.NewBasicClientOnSovereignCloud(accountName, accountKey, azure.ChinaCloud)
 		if err != nil {
 			return nil, fmt.Errorf("create ABS client (from storage account name and key) failed: %v", err)
 		}
